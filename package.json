@@ -2,7 +2,7 @@
   "name": "rece",
   "version": "0.1.0",
   "description": "Request, Response, Repeat.",
-  "main": "index.js",
+  "main": "lib/Server.js",
   "directories": {
     "lib": "lib"
   },
