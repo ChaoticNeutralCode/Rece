@@ -1,6 +1,6 @@
 {
   "name": "rece",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Request, Response, Repeat.",
   "main": "lib/Server.js",
   "directories": {
