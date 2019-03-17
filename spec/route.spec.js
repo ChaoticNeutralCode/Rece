@@ -59,6 +59,19 @@ describe('Route Handlers', () => {
     });
   });
 
+  it('should allow chaining of handler addition', () => {
+    const g = () => {}, 
+          p = () => {},
+          r = new Route('/test');
+    
+    r.get(g).post(p);
+      
+    expect(r.handlers).toEqual({
+      'GET': g,
+      'POST': p
+    });
+  });
+
   it('should not execute if path does not match', () => {
     const r = new Route('/test'),
           h = jasmine.createSpy('h');
