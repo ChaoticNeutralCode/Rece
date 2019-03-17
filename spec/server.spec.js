@@ -1,5 +1,5 @@
 const request = require('request-promise-native'),
-      srv = require('../lib/Server')(),
+      srv = require('../index')(),
       urlBase = `http://localhost:${srv.port}`;
 
 srv.start();
@@ -25,7 +25,7 @@ describe('Routing', () => {
   it('should allow returning responses from route handlers', () => {
     srv.route('/test2', (req, res) => {
       res.setHeader('content-type', 'text/plain');
-      return 'Test Success';
+      return 'Test 2 Success';
     });
 
     return request({
@@ -34,7 +34,7 @@ describe('Routing', () => {
     }).then((res) => {
       expect(res.statusCode).toBe(200);
       expect(res.headers['content-type']).toBe('text/plain');
-      expect(res.body).toBe('Test Success');
+      expect(res.body).toBe('Test 2 Success');
     });
   });
 
@@ -47,12 +47,12 @@ describe('Routing', () => {
     return request({
       uri: `${urlBase}/test3`,
       json: true,
-      body: {message:'Test Success'},
+      body: {message:'Test 3 Success'},
       resolveWithFullResponse: true  
     }).then((res) => {
       expect(res.statusCode).toBe(200);
       expect(res.headers['content-type']).toBe('application/json');
-      expect(res.body.message).toBe('Test Success');
+      expect(res.body.message).toBe('Test 3 Success');
     });
   });
 
@@ -60,10 +60,21 @@ describe('Routing', () => {
     return request({
       uri: `${urlBase}/test4`,
       resolveWithFullResponse: true  
-    })
-    .catch(err => {
+    }).catch(err => {
       expect(err.response.statusCode).toBe(404);
       expect(err.response.body).toBe('404');
+    });
+  });
+
+  it('should allow loading of previously recreated routes', () => {
+    srv.route(require('./test.route'));
+
+    return request({
+      uri: `${urlBase}/test6`,
+      resolveWithFullResponse: true  
+    }).then((res) => {
+      expect(res.statusCode).toBe(200);
+      expect(res.body).toBe('Test 6 Success');
     });
   });
 });
