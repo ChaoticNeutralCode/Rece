@@ -98,4 +98,23 @@ describe('Preprocessors', () => {
       expect(res.body).toBe('Test Success');
     });
   });
+
+  it('should stop the chain if request is handled by a preprocessor', () => {    
+    srv.pre((req, res, next) => {
+      res.write('Preprocessor');
+      res.end();
+
+      next(true);
+    });
+
+    return request({
+      uri: `${urlBase}/test`,
+      resolveWithFullResponse: true  
+    }).then((res) => {
+      expect(res.statusCode).toBe(200);
+      expect(res.body).toBe('Preprocessor');
+
+      srv.chain.splice(4, 1);
+    });
+  });
 });
