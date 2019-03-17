@@ -78,9 +78,9 @@ describe('Preprocessors', () => {
     srv.pre(p2);
     srv.pre(p3);
     
-    expect(srv.chain[0]).toBe(p1);
-    expect(srv.chain[1]).toBe(p2);
-    expect(srv.chain[2]).toBe(p3);
+    expect(srv.chain[1]).toBe(p1);
+    expect(srv.chain[2]).toBe(p2);
+    expect(srv.chain[3]).toBe(p3);
   });
 
   it('should execute preprocessors before any routing', () => {
@@ -118,3 +118,52 @@ describe('Preprocessors', () => {
     });
   });
 });
+
+describe('Static Files', () => {
+  srv.serve(__dirname, 'public');
+
+  it('should serve html files', () => {
+    return request({
+      uri: `${urlBase}/test.html`,
+      resolveWithFullResponse: true  
+    }).then((res) => {
+      expect(res.statusCode).toBe(200);
+      expect(res.headers['content-type']).toBe('text/html');
+      expect(res.body).toBe('<h1>Test Success</h1>');
+    });
+  });
+
+  it('should serve an index HTML file', () => {
+    return request({
+      uri: `${urlBase}/`,
+      resolveWithFullResponse: true  
+    }).then((res) => {
+      expect(res.statusCode).toBe(200);
+      expect(res.headers['content-type']).toBe('text/html');
+      expect(res.body).toBe('<h1>Index Page</h1>');
+    });
+  });
+
+  it('should serve css files', () => {
+    return request({
+      uri: `${urlBase}/css/test.css`,
+      resolveWithFullResponse: true  
+    }).then((res) => {
+      expect(res.statusCode).toBe(200);
+      expect(res.headers['content-type']).toBe('text/css');
+      expect(res.body).toBe('body { color: white; }');
+    });
+  });
+
+  it('should serve js files', () => {
+    return request({
+      uri: `${urlBase}/js/test.js`,
+      resolveWithFullResponse: true  
+    }).then((res) => {
+      expect(res.statusCode).toBe(200);
+      expect(res.headers['content-type']).toBe('text/javascript');
+      expect(res.body).toBe("const test = 'Success';");
+    });
+  });
+});
+
