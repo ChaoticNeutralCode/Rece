@@ -1,3 +1,3 @@
-![Image of Yaktocat](rece_logo.png)
+![Rece Logo](rece_logo.png)
 
 Simple server implementation for Node.

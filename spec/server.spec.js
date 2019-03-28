@@ -1,4 +1,6 @@
-const request = require('request-promise-native'),
+const fs = require('fs'),
+      path = require('path'),
+      request = require('request-promise-native'),
       srv = require('../index')(),
       urlBase = `http://localhost:${srv.port}`;
 
@@ -174,6 +176,176 @@ describe('Static Files', () => {
       expect(res.statusCode).toBe(200);
       expect(res.headers['content-type']).toBe('text/javascript');
       expect(res.body).toBe("const test = 'Success';");
+    });
+  });
+
+  it('should serve json files', () => {
+    return request({
+      uri: `${urlBase}/manifest.json`,
+      resolveWithFullResponse: true  
+    }).then((res) => {
+      expect(res.statusCode).toBe(200);
+      expect(res.headers['content-type']).toBe('application/json');
+      expect(res.body).toBe('{\r\n  "test": "success"\r\n}');
+    });
+  });
+
+  function getFile(...pathPieces) {
+    return fs.readFileSync(
+      path.join(__dirname, ...pathPieces)
+    ).toString();
+  }
+
+  function getImage(extname) {
+    return getFile('public', 'img', `image.${extname}`);
+  }
+
+  function getVideo(extname) {
+    return getFile('public', 'video', `video.${extname}`);
+  }
+
+  function getAudio(extname) {
+    return getFile('public', 'audio', `audio.${extname}`);
+  }
+  function getFont(extname) {
+    return getFile('public', 'fonts', `font.${extname}`);
+  }
+
+  it('should serve common image files', () => {
+    return request({
+      uri: `${urlBase}/img/image.png`,
+      resolveWithFullResponse: true  
+    })
+    .then((res) => {
+      expect(res.statusCode).toBe(200);
+      expect(res.headers['content-type']).toBe('image/png');
+      expect(res.body).toBe(getImage('png'));
+
+      return request({
+        uri: `${urlBase}/img/image.svg`,
+        resolveWithFullResponse: true  
+      });
+    })
+    .then((res) => {
+      expect(res.statusCode).toBe(200);
+      expect(res.headers['content-type']).toBe('image/svg+xml');
+      expect(res.body).toBe(getImage('svg'));
+
+      return request({
+        uri: `${urlBase}/img/image.jpg`,
+        resolveWithFullResponse: true  
+      });
+    })
+    .then((res) => {
+      expect(res.statusCode).toBe(200);
+      expect(res.headers['content-type']).toBe('image/jpeg');
+      expect(res.body).toBe(getImage('jpg'));
+
+      return request({
+        uri: `${urlBase}/img/image.gif`,
+        resolveWithFullResponse: true  
+      });
+    })
+    .then((res) => {
+      expect(res.statusCode).toBe(200);
+      expect(res.headers['content-type']).toBe('image/gif');
+      expect(res.body).toBe(getImage('gif'));
+    });
+  });
+
+  it('should serve common video files', () => {
+    return request({
+      uri: `${urlBase}/video/video.mp4`,
+      resolveWithFullResponse: true
+    })
+    .then((res) => {
+      expect(res.statusCode).toBe(200);
+      expect(res.headers['content-type']).toBe('video/mp4');
+      expect(res.body).toBe(getVideo('mp4'));
+    });
+  });
+
+  it('should serve common audio files', () => {
+    return request({
+      uri: `${urlBase}/audio/audio.mp3`,
+      resolveWithFullResponse: true
+    })
+    .then((res) => {
+      expect(res.statusCode).toBe(200);
+      expect(res.headers['content-type']).toBe('audio/mpeg');
+      expect(res.body).toBe(getAudio('mp3'));
+
+      return request({
+        uri: `${urlBase}/audio/audio.wav`,
+        resolveWithFullResponse: true  
+      });
+    })
+    .then((res) => {
+      expect(res.statusCode).toBe(200);
+      expect(res.headers['content-type']).toBe('audio/wav');
+      expect(res.body).toBe(getAudio('wav'));
+    });
+  });
+
+  it('should serve common font files', () => {
+    return request({
+      uri: `${urlBase}/fonts/font.eot`,
+      resolveWithFullResponse: true
+    })
+    .then((res) => {
+      expect(res.statusCode).toBe(200);
+      expect(res.headers['content-type']).toBe('application/vnd.ms-fontobject');
+      expect(res.body).toBe(getFont('eot'));
+
+      return request({
+        uri: `${urlBase}/fonts/font.otf`,
+        resolveWithFullResponse: true  
+      });
+    })
+    .then((res) => {
+      expect(res.statusCode).toBe(200);
+      expect(res.headers['content-type']).toBe('font/otf');
+      expect(res.body).toBe(getFont('otf'));
+
+      return request({
+        uri: `${urlBase}/fonts/font.otf`,
+        resolveWithFullResponse: true  
+      });
+    })
+    .then((res) => {
+      expect(res.statusCode).toBe(200);
+      expect(res.headers['content-type']).toBe('font/otf');
+      expect(res.body).toBe(getFont('otf'));
+
+      return request({
+        uri: `${urlBase}/fonts/font.ttf`,
+        resolveWithFullResponse: true  
+      });
+    })
+    .then((res) => {
+      expect(res.statusCode).toBe(200);
+      expect(res.headers['content-type']).toBe('font/ttf');
+      expect(res.body).toBe(getFont('ttf'));
+
+      return request({
+        uri: `${urlBase}/fonts/font.woff`,
+        resolveWithFullResponse: true  
+      });
+    })
+    .then((res) => {
+      expect(res.statusCode).toBe(200);
+      expect(res.headers['content-type']).toBe('font/woff');
+      expect(res.body).toBe(getFont('woff'));
+
+      return request({
+        uri: `${urlBase}/fonts/font.woff2`,
+        resolveWithFullResponse: true  
+      });
+    })
+    .then((res) => {
+      expect(res.statusCode).toBe(200);
+      expect(res.headers['content-type']).toBe('font/woff2');
+      expect(res.body).toBe(getFont('woff2'));
     });
   });
 });
