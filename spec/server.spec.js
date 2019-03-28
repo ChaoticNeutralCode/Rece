@@ -91,9 +91,9 @@ describe('Preprocessors', () => {
     srv.pre(p2);
     srv.pre(p3);
     
-    expect(srv.chain[1]).toBe(p1);
-    expect(srv.chain[2]).toBe(p2);
-    expect(srv.chain[3]).toBe(p3);
+    expect(srv.chain[2]).toBe(p1);
+    expect(srv.chain[3]).toBe(p2);
+    expect(srv.chain[4]).toBe(p3);
   });
 
   it('should execute preprocessors before any routing', () => {
@@ -134,6 +134,18 @@ describe('Preprocessors', () => {
 
 describe('Static Files', () => {
   srv.serve(__dirname, 'public');
+  srv.serve('/single/file', __dirname, 'single.html');
+
+  it('should be able to serve single files', () => {
+    return request({
+      uri: `${urlBase}/single/file`,
+      resolveWithFullResponse: true  
+    }).then((res) => {
+      expect(res.statusCode).toBe(200);
+      expect(res.headers['content-type']).toBe('text/html');
+      expect(res.body).toBe('<h1>Im Single!</h1>');
+    });
+  });
 
   it('should serve html files', () => {
     return request({
